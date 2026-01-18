@@ -1,0 +1,14 @@
+ecommerce_project/
+├── data/
+│   ├── raw/                # Synced from Google Drive (CSV/JSON)
+│   │   ├── amazon/
+│   │   ├── shopify/
+│   │   └── lazada/
+|   |   └── shopee/
+├── logs/                   # Log files for debugging
+├── scripts/
+│   ├── gdrive_sync.py      # Script to download files from GDrive
+│   ├── load_to_duckdb.py   # Script to ingest files into DuckDB
+├── .env                    # Store folder IDs and local paths (ignored by Git)
+├── main.py                 # The "Orchestrator" - runs everything
+└── ecommerce.duckdb         # Your local database file

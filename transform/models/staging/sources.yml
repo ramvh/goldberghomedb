@@ -1,0 +1,9 @@
+version: 2
+sources:
+  - name: raw_data    # dbt alias name
+    schema: main
+    tables:
+      - name: raw_amazon_orders
+      - name: raw_shopify_orders
+      - name: raw_shopee_orders
+      - name: raw_lazada_orders

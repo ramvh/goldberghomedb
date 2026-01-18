@@ -1,0 +1,83 @@
+-- Lazada basic transformation from raw to staging
+    SELECT orderItemId as order_item_id
+        , orderType as order_type
+        , trim(Guarantee) as guarantee
+        , trim(deliveryType) as delivery_type
+        , lazadaId as lazada_id
+        , trim(sellerSku) as gbh_sku
+        , trim(lazadaSku) as lazada_sku
+        , trim(wareHouse) as warehouse
+        , createTime::timestamp as create_time
+        , updateTime::timestamp as update_time
+        , trim(rtsSla) as rts_sla
+        , trim(ttsSla) as tts_sla
+        , orderNumber as order_num
+        , invoiceRequired as invoice_required
+        , invoiceNumber as invoice_num
+        , coalesce(
+            try_strptime(trim(deliveredDate), '%m/%d/%Y %H:%M:%S'),  -- 4/10/2023 17:48:00
+            try_strptime(trim(deliveredDate), '%m/%d/%Y'),           -- 6/9/2024
+            try_strptime(trim(deliveredDate), '%d %b %Y %H:%M'),     -- 30 Jul 2024 11:27
+            try_strptime(trim(deliveredDate), '%d %b %Y')            -- (if some have no time)
+            )::TIMESTAMP AS delivered_date
+        , trim(customerName) as customer_name
+        , trim(customerEmail) as customer_email
+        , trim(nationalRegistrationNumber) as national_registration_num
+        , trim(shippingName) as shipping_name
+        , trim(shippingAddress) as shipping_addr
+        , trim(shippingAddress2) as shipping_addr2
+        , trim(shippingAddress3) as shipping_addr3
+        , trim(shippingAddress4) as shipping_addr4
+        , trim(shippingAddress5) as shipping_addr5
+        , trim(shippingPhone) as shipping_phone
+        , trim(shippingPhone2) as shipping_phone2
+        , trim(shippingCity) as shipping_city
+        , trim(shippingPostCode) as shipping_post_code
+        , trim(shippingCountry) as shipping_country
+        , trim(shippingRegion) as shipping_region
+        , trim(billingName) as billing_name
+        , trim(billingAddr) as billing_addr
+        , trim(billingAddr2) as billing_addr2
+        , trim(billingAddr3) as billing_addr3
+        , trim(billingAddr4) as billing_addr4
+        , trim(billingAddr5) as billing_addr5
+        , trim(billingPhone) as billing_phone
+        , trim(billingPhone2) as billing_phone2
+        , trim(billingCity) as billing_city
+        , trim(billingPostCode) as billing_post_code
+        , trim(billingCountry) as billing_country
+        , taxCode as tax_code
+        , branchNumber as branch_num
+        , taxInvoiceRequested as tax_invoice_requested
+        , trim(payMethod) as pay_method
+        , replace(paidPrice,'$','')::decimal(10,2) as paid_price
+        , replace(unitPrice,'$','')::decimal(10,2) as unit_price
+        , replace(sellerDiscountTotal,'$','')::decimal(10,2) as seller_discount_total
+        , replace(shippingFee,'$','')::decimal(10,2) as shipping_fee
+        , walletCredit::decimal(10,2) as wallet_credit
+        , trim(itemName) as item_name
+        , trim(variation) as variation
+        , trim(cdShippingProvider) as cd_shipping_provider
+        , trim(shippingProvider) as shipping_provider
+        , trim(shipmentTypeName) as shipment_type_name
+        , trim(shippingProviderType) as shipping_provider_type
+        , trim(cdTrackingCode) as cd_tracking_code
+        , trim(trackingCode) as tracking_code
+        , trim(trackingUrl) as tracking_url
+        , trim(shippingProviderFM) as shipping_provider_fm
+        , trim(trackingCodeFM) as tracking_code_fm
+        , trim(trackingUrlFM) as tracking_url_fm
+        , trim(promisedShippingTime) as promised_shipping_time
+        , premium as premium
+        , trim(status) as status
+        , trim(buyerFailedDeliveryReturnInitiator) as buyer_failed_delivery_return_initiator
+        , trim(buyerFailedDeliveryReason) as buyer_failed_delivery_reason
+        , trim(buyerFailedDeliveryDetail) as buyer_failed_delivery_detail
+        , trim(buyerFailedDeliveryUserName) as buyer_failed_delivery_username
+        , trim(bundleId) as bundle_id
+        , semiManaged as semi_managed
+        , trim(bundleDiscount) as bundle_discount
+        , refundAmount::decimal(10,2) as refund_amount
+        , trim(sellerNote) as seller_note
+        , flexibleDeliveryTime::timestamp as flexible_delivery_time
+    FROM {{source('raw_data', 'raw_lazada_orders')}}    
